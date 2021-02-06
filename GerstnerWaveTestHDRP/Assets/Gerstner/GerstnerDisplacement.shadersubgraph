@@ -335,7 +335,23 @@
         }
     ],
     "m_Groups": [],
-    "m_StickyNotes": [],
+    "m_StickyNotes": [
+        {
+            "m_GuidSerialized": "82f458f7-4a88-4ff1-8d52-b6c1ce072af2",
+            "m_Title": "It was provided to create 4 different waves and 4 different wavelengths.",
+            "m_Content": "",
+            "m_TextSize": 2,
+            "m_Theme": 0,
+            "m_Position": {
+                "serializedVersion": "2",
+                "x": -1048.0,
+                "y": -337.0,
+                "width": 2245.0,
+                "height": 100.0
+            },
+            "m_GroupGuidSerialized": "00000000-0000-0000-0000-000000000000"
+        }
+    ],
     "m_SerializableEdges": [
         {
             "typeInfo": {

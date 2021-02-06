@@ -342,7 +342,23 @@
             }
         }
     ],
-    "m_StickyNotes": [],
+    "m_StickyNotes": [
+        {
+            "m_GuidSerialized": "8eb64e7d-acb4-472a-b93a-74a5f5368eb2",
+            "m_Title": "\"Sub Graph\" used to create a wave.",
+            "m_Content": "",
+            "m_TextSize": 2,
+            "m_Theme": 0,
+            "m_Position": {
+                "serializedVersion": "2",
+                "x": -318.0,
+                "y": -449.0,
+                "width": 1118.0,
+                "height": 100.0
+            },
+            "m_GroupGuidSerialized": "00000000-0000-0000-0000-000000000000"
+        }
+    ],
     "m_SerializableEdges": [
         {
             "typeInfo": {
