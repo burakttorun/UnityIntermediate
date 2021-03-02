@@ -11,9 +11,21 @@ public class GameManager : MonoBehaviour
         myPlayer.Experience = 5;
         int x = myPlayer.Experience;
         TernaryOperator(myPlayer);
+
+        Statics();
     }
 
-     public void TernaryOperator(PlayerController myPlayer)
+    private static void Statics()
+    {
+        EnemyController enemy1 = new EnemyController();
+        EnemyController enemy2 = new EnemyController();
+        EnemyController enemy3 = new EnemyController();
+
+        //You can access a static variable by using the class name and the dot operator.
+        int counter = EnemyController.enemyCount;
+    }
+
+    public void TernaryOperator(PlayerController myPlayer)
     {
         //This is an example Ternary Operation that chooses a message based on the variable "health".
         string message = myPlayer.Health > 0 ? "Player is Alive" : myPlayer.Health == 0 ? "Player is Barely Alive" : "Player is Dead";
