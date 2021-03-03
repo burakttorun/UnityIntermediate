@@ -13,6 +13,13 @@ public class GameManager : MonoBehaviour
         TernaryOperator(myPlayer);
 
         Statics();
+        MethodOverloading();
+    }
+
+    private static void MethodOverloading()
+    {
+        int y = Utilities.Add(3, 4);
+        string z = Utilities.Add("Hello", "World");
     }
 
     private static void Statics()
@@ -23,6 +30,10 @@ public class GameManager : MonoBehaviour
 
         //You can access a static variable by using the class name and the dot operator.
         int counter = EnemyController.enemyCount;
+
+        //You can access a static method by using the class name
+        //and the dot operator.
+        int x = Utilities.Add(5, 6);
     }
 
     public void TernaryOperator(PlayerController myPlayer)
