@@ -6,8 +6,21 @@ public class FruitSalad : MonoBehaviour
 {
     void Start()
     {
-        //  Inheritance();
-        Polymorphism();
+        // Inheritance();
+        // Polymorphism();
+        MemberHiding();
+    }
+
+    private static void MemberHiding()
+    {
+        Fruit fruit = new Fruit();
+        Apple apple = new Apple();
+        //Notice how each Humanoid variable contains
+        //a reference to a different class in the
+        //inheritance hierarchy, yet each of them
+        //calls the Humanoid Yell() method.
+        fruit.Yell();
+        apple.Yell();
     }
 
     private static void Polymorphism()

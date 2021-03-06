@@ -33,4 +33,9 @@ public class Fruit
     {
         Debug.Log("Hello, I am a fruit.");
     }
+    //Base version of the Yell method
+    public void Yell()
+    {
+        Debug.Log("Fruit version of the Yell() method");
+    }
 }

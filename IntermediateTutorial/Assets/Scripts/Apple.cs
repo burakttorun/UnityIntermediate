@@ -36,4 +36,10 @@ public class Apple : Fruit
     {
         Debug.Log("Hello, I am an apple.");
     }
+
+   //This hides the Fruit version.
+    new public void Yell()
+    {
+        Debug.Log("Apple version of the Yell() method");
+    }
 }
