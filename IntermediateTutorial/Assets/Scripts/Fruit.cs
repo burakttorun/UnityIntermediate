@@ -38,4 +38,11 @@ public class Fruit
     {
         Debug.Log("Fruit version of the Yell() method");
     }
+
+    //These methods are virtual and thus can be overriden
+    //in child classes
+    public virtual void Ripeness()
+    {
+        Debug.Log("This Fruit is ripe.");
+    }
 }

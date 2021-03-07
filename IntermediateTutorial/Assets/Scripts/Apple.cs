@@ -42,4 +42,13 @@ public class Apple : Fruit
     {
         Debug.Log("Apple version of the Yell() method");
     }
+
+    //These methods are overrides and therefore
+    //can override any virtual methods in the parent
+    //class.
+    public override void Ripeness()
+    {
+        base.Ripeness();
+        Debug.Log("This Apple is ripe.");
+    }
 }
