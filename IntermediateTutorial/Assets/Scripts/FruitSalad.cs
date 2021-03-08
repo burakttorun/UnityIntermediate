@@ -9,7 +9,7 @@ public class FruitSalad : MonoBehaviour
         // Inheritance();
         // Polymorphism();
         // MemberHiding();
-        Overriding();
+        // Overriding();
     }
 
     private static void Overriding()
