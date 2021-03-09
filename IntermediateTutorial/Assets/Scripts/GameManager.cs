@@ -45,7 +45,16 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-       
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            //Notice how you pass no parameter into this
+            //extension method even though you had one in the
+            //method declaration. The transform object that
+            //this method is called from automatically gets
+            //passed in as the first parameter.
+            transform.ResetTransformation();
+
+        }
         
     }
 }
