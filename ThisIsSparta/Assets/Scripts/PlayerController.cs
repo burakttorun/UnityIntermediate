@@ -12,11 +12,12 @@ public class PlayerController : MonoBehaviour
     private float maximumRotationAngle = 30.0f;
     private float rangeX = 4.0f;
     private float growthRate = 0.003f;
-    private bool isGameOver = false;
-
-    public static int diamond = 0;
+    public bool isGameOver = false;
+    public bool isReachBoss = false;
+    private static int diamond = 0;
 
     Animator playerAnim;
+    
 
 
 
@@ -28,7 +29,7 @@ public class PlayerController : MonoBehaviour
     }
     private void FixedUpdate()
     {
-        if (!isGameOver)
+        if (!isGameOver && !isReachBoss)
         {
             TransformBound();
             RotationBound();
@@ -38,6 +39,12 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            playerAnim.SetInteger("WeaponType_int", 10);
+        }
+        else
+            playerAnim.SetInteger("WeaponType_int", 0);
     }
 
     void TurnRed()
@@ -137,27 +144,12 @@ public class PlayerController : MonoBehaviour
             Destroy(other.gameObject);
         }
 
-        if (other.CompareTag("Wall1") && playerPower > 15)
-        {
-            other.GetComponent<Collider>().isTrigger = true;
-        }
-        if (other.CompareTag("Wall1") && playerPower >= 10 && playerPower < 15)
-        {
-            other.GetComponent<Collider>().isTrigger = true;
-            playerPower = 10;
-        }
-        if (other.CompareTag("Wall1") && playerPower < 10)
-        {
-            playerAnim.SetBool("Death_b", true);
-            playerAnim.SetInteger("DeathType_int", 1);
-            isGameOver = true;
-            Destroy(gameObject);
-        }
-
+      
         if (other.CompareTag("Arena"))
         {
             speed = 0;
-            playerAnim.SetFloat("Speed_f", 0.1f);
+            playerAnim.SetFloat("Speed_f",0f);
+            isReachBoss = true;
         }
 
         if (other.CompareTag("Obstacle"))
@@ -169,5 +161,24 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    private void OnCollisionEnter(Collision collision)
+    {
 
+        if (collision.gameObject.CompareTag("Wall1") && playerPower >= 15)
+        {
+            collision.gameObject.GetComponent<Collider>().isTrigger = true;
+        }
+        if (collision.gameObject.CompareTag("Wall1") && playerPower >= 10 && playerPower < 15)
+        {
+            collision.gameObject.GetComponent<Collider>().isTrigger = true;
+            playerPower = 10;
+        }
+        if (collision.gameObject.CompareTag("Wall1") && playerPower < 10)
+        {
+            playerAnim.SetBool("Death_b", true);
+            playerAnim.SetInteger("DeathType_int", 1);
+            isGameOver = true;
+            Destroy(gameObject,3f);
+        }
+    }
 }
