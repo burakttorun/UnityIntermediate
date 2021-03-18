@@ -4,8 +4,17 @@
 TagManager:
   serializedVersion: 2
   tags:
-  - Wall
+  - Undefined
   - Ally
+  - LeftBound
+  - RightBound
+  - TeleporterGreen
+  - TeleporterRed
+  - Wall1
+  - Wall2
+  - Diamond
+  - Obstacle
+  - Arena
   layers:
   - Default
   - TransparentFX
@@ -15,7 +24,7 @@ TagManager:
   - UI
   - 
   - 
-  - 
+  - PostProcessing
   - 
   - 
   - 
