@@ -11,7 +11,7 @@ public class EnemyController : MonoBehaviour
     Rigidbody enemyRb;
     private float distanceWithPlayer=3.1f;
     private float thrust = 10000;
-    public int enemyHealth = 200;
+    public int enemyHealth = 400;
     private float time;
     private float timeLimit=3f;
     
@@ -65,11 +65,11 @@ public class EnemyController : MonoBehaviour
             time += Time.deltaTime;
             if (time < timeLimit)
             {
-                thrust = 10000;
+                thrust = 500;
             }
             else
                 thrust = 0;
-            enemyRb.AddForce(Vector3.forward *PlayerController.punchStrength * Time.deltaTime * thrust, ForceMode.Impulse);
+            enemyRb.AddForce(Vector3.forward *PlayerController.punchStrength * Time.deltaTime * thrust* playerController.playerPower, ForceMode.Impulse);
             gameObject.GetComponent<Collider>().isTrigger = false;
         }
     }
@@ -78,7 +78,7 @@ public class EnemyController : MonoBehaviour
     {
         if (other.CompareTag("PlayerFist"))
         {
-            enemyHealth -= 50;
+            enemyHealth -= playerController.playerPower*3;
            
         }
 
