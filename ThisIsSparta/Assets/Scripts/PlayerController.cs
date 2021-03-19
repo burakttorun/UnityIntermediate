@@ -7,18 +7,36 @@ public class PlayerController : MonoBehaviour
     private float speed = 10f;
     private float rotationSpeed = 50f;
     private float horizontalInput;
-    private int numberOfPeople = 0;
-    private int playerPower = 1;
+    
     private float maximumRotationAngle = 30.0f;
     private float rangeX = 4.0f;
     private float growthRate = 0.003f;
+    
     public bool isGameOver = false;
     public bool isReachBoss = false;
+    public int playerHealth = 12000;
+
+   
+    public static float punchStrength = 2f;
+
+    public static float distanceLimit = 50f;
+    private float basePoint = 400f;
+    [SerializeField]
+    GameObject wallPref;
+
+    [SerializeField]
     private static int diamond = 0;
+    [SerializeField]
+    private int numberOfPeople = 0;
+    [SerializeField]
+    private int playerPower = 1;
+    [SerializeField]
+    ParticleSystem particleExplosion;
+
 
     Animator playerAnim;
-    
 
+    EnemyController enemyController;
 
 
     // Start is called before the first frame update
@@ -26,6 +44,8 @@ public class PlayerController : MonoBehaviour
     {
         TurnGreen();
         playerAnim = GetComponent<Animator>();
+        enemyController = GameObject.Find("EnemyBoss").GetComponent<EnemyController>();
+        SpawnWall();
     }
     private void FixedUpdate()
     {
@@ -42,11 +62,31 @@ public class PlayerController : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Space))
         {
             playerAnim.SetInteger("WeaponType_int", 10);
+            if(enemyController.enemyHealth <= 50)
+            {
+                particleExplosion.Play();
+            }
+            
         }
         else
             playerAnim.SetInteger("WeaponType_int", 0);
+
+        if(enemyController.enemyHealth < 0)
+        {
+            playerAnim.SetInteger("WeaponType_int", 0);
+            playerAnim.SetInteger("Animation_int", 6);
+        }
     }
 
+    void SpawnWall()
+    {
+        wallPref.transform.position = new Vector3(wallPref.transform.position.x, wallPref.transform.position.y, basePoint + distanceLimit);
+    }
+
+    void UpgradeDistance()
+    {
+        distanceLimit += 10f;
+    }
     void TurnRed()
     {
         GetComponent<Renderer>().material.color = Color.red;
@@ -120,6 +160,11 @@ public class PlayerController : MonoBehaviour
     {
         transform.localScale -= Vector3.one * (playerPower * growthRate);
     }
+
+    void PowerUp()
+    {
+        punchStrength += 0.25f;
+    }
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Ally"))
@@ -159,8 +204,23 @@ public class PlayerController : MonoBehaviour
             isGameOver = true;
             Destroy(gameObject, 3f);
         }
+    
     }
 
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.CompareTag("EnemyFist"))
+        {
+            playerHealth -= 40;
+            if (playerHealth < 0)
+            {
+                playerAnim.SetBool("Death_b", true);
+                playerAnim.SetInteger("DeathType_int", 1);
+                isGameOver = true;
+                Destroy(gameObject, 3f);
+            }
+        }
+    }
     private void OnCollisionEnter(Collision collision)
     {
 

@@ -4,17 +4,16 @@
 TagManager:
   serializedVersion: 2
   tags:
-  - Undefined
-  - Ally
-  - LeftBound
-  - RightBound
+  - Arena
   - TeleporterGreen
   - TeleporterRed
-  - Wall1
-  - Wall2
   - Diamond
+  - Ally
+  - Wall1
+  - EnemyFist
   - Obstacle
-  - Arena
+  - PlayerFist
+  - Limit
   layers:
   - Default
   - TransparentFX
