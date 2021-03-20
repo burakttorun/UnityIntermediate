@@ -8,6 +8,7 @@ using UnityEngine.UI;
 
 public class ProgressBar : MonoBehaviour
 {
+    PlayerController playerController;
 
     [Header("Title Setting")]
     public string Title;
@@ -22,11 +23,6 @@ public class ProgressBar : MonoBehaviour
     [Range(1f, 100f)]
     public int Alert = 20;
     public Color BarAlertColor;
-
-    [Header("Sound Alert")]
-    public AudioClip sound;
-    public bool repeat = false;
-    public float RepeatRate = 1f;
 
     private Image bar, barBackground;
     private float nextPlay;
@@ -55,6 +51,7 @@ public class ProgressBar : MonoBehaviour
         txtTitle = transform.Find("Text").GetComponent<Text>();
         barBackground = transform.Find("BarBackground").GetComponent<Image>();
         audiosource = GetComponent<AudioSource>();
+        playerController = GameObject.Find("Player").GetComponent<PlayerController>();
     }
 
     private void Start()
@@ -92,6 +89,7 @@ public class ProgressBar : MonoBehaviour
 
     private void Update()
     {
+        
         if (!Application.isPlaying)
         {           
             UpdateValue(50);
@@ -104,14 +102,7 @@ public class ProgressBar : MonoBehaviour
 
             barBackground.sprite = BarBackGroundSprite;           
         }
-        else
-        {
-            if (Alert >= barValue && Time.time > nextPlay)
-            {
-                nextPlay = Time.time + RepeatRate;
-                audiosource.PlayOneShot(sound);
-            }
-        }
+       
     }
 
 }

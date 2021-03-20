@@ -9,14 +9,15 @@ public class EnemyController : MonoBehaviour
     NavMeshAgent agent;
     Animator bossAnim;
     Rigidbody enemyRb;
-    private float distanceWithPlayer=3.1f;
+    private float distanceWithPlayer = 3.1f;
     private float thrust = 10000;
     public int enemyHealth = 400;
     private float time;
-    private float timeLimit=3f;
-    
+    private float timeLimit = 3f;
+
     [SerializeField]
     ParticleSystem particleExplosion;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -28,7 +29,7 @@ public class EnemyController : MonoBehaviour
 
     // Update is called once per frame
     void Update()
-    { 
+    {
         if (playerController.isReachBoss && !playerController.isGameOver)
         {
             agent.SetDestination(playerController.transform.position);
@@ -46,9 +47,9 @@ public class EnemyController : MonoBehaviour
 
         if (playerController.playerHealth < 0)
         {
-           // particleExplosion.Stop();
+            // particleExplosion.Stop();
             agent.SetDestination(transform.position);
-            bossAnim.SetInteger("WeaponType_int",0);
+            bossAnim.SetInteger("WeaponType_int", 0);
             bossAnim.SetInteger("Animation_int", 6);
         }
 
@@ -57,7 +58,7 @@ public class EnemyController : MonoBehaviour
             bossAnim.SetBool("Death_b", true);
             bossAnim.SetInteger("DeathType_int", 1);
             agent.SetDestination(transform.position);
-            
+
         }
 
         if (enemyHealth < 0)
@@ -69,8 +70,9 @@ public class EnemyController : MonoBehaviour
             }
             else
                 thrust = 0;
-            enemyRb.AddForce(Vector3.forward *PlayerController.punchStrength * Time.deltaTime * thrust* playerController.playerPower, ForceMode.Impulse);
+            enemyRb.AddForce(Vector3.forward * PlayerController.punchStrength * Time.deltaTime * thrust * playerController.playerPower, ForceMode.Impulse);
             gameObject.GetComponent<Collider>().isTrigger = false;
+
         }
     }
 
@@ -78,8 +80,8 @@ public class EnemyController : MonoBehaviour
     {
         if (other.CompareTag("PlayerFist"))
         {
-            enemyHealth -= playerController.playerPower*3;
-           
+            enemyHealth -= playerController.playerPower * 3;
+
         }
 
         if (other.CompareTag("Limit"))

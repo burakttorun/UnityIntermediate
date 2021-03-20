@@ -1,14 +1,14 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class PlayerController : MonoBehaviour
 {
     private float speed = 10f;
-    private float rotationSpeed = 50f;
-    private float horizontalInput;
-
-    private float maximumRotationAngle = 30.0f;
+    private float rotationSpeed = 0.01f;
+    //private float horizontalInput;
+    //private float maximumRotationAngle = 30.0f;
     private float rangeX = 4.0f;
     private float growthRate = 0.003f;
 
@@ -21,12 +21,12 @@ public class PlayerController : MonoBehaviour
     public static int powerUpLevel = 1;
     public static float distanceLimit = 50f;
     public static int thrustLevel = 1;
-    public static int powerUpPrice=1;
-    public static int thrustPrice=1;
+    public static int powerUpPrice = 1;
+    public static int thrustPrice = 1;
 
-    public static int wallet = 1000;
+    public static int wallet = 0;
 
-    private float basePoint = 400f;
+    private float basePoint = 377f;
     [SerializeField]
     GameObject wallPref;
 
@@ -46,6 +46,14 @@ public class PlayerController : MonoBehaviour
     Animator playerAnim;
 
     EnemyController enemyController;
+    GameManager gameManager;
+
+    [SerializeField]
+    AudioClip boomSound;
+    [SerializeField]
+    AudioClip collectSound;
+    AudioSource audioSource;
+    private Touch touch;
 
 
     // Start is called before the first frame update
@@ -54,14 +62,17 @@ public class PlayerController : MonoBehaviour
         TurnGreen();
         playerAnim = GetComponent<Animator>();
         enemyController = GameObject.Find("EnemyBoss").GetComponent<EnemyController>();
+        gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
+        audioSource = GetComponent<AudioSource>();
         //SpawnWall();
+
     }
     private void FixedUpdate()
     {
-        if (!isGameOver && !isReachBoss)
+        if (GameManager.isGameActive && !isReachBoss)
         {
             TransformBound();
-            RotationBound();
+            //RotationBound();
             Movement();
             SpawnWall();
         }
@@ -69,14 +80,14 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (Input.GetKeyDown(KeyCode.Space) && isReachBoss)
         {
             playerAnim.SetInteger("WeaponType_int", 10);
             if (enemyController.enemyHealth <= 50)
             {
                 particleExplosion.Play();
             }
-            
+
         }
         else
             playerAnim.SetInteger("WeaponType_int", 0);
@@ -95,34 +106,37 @@ public class PlayerController : MonoBehaviour
 
     public void UpgradeDistance()
     {
-       
+
         if (wallet >= thrustPrice)
         {
             wallet -= thrustPrice;
             thrustPrice = (int)Mathf.Pow(2, thrustLevel);
             distanceLimit += 25f;
             thrustLevel++;
-            
+
         }
-        
+
     }
     public void PowerUp()
     {
-       
+
         if (wallet >= powerUpPrice)
         {
             wallet -= powerUpPrice;
             powerUpPrice = (int)Mathf.Pow(2, powerUpLevel);
             punchStrength += 0.25f;
             powerUpLevel++;
-            
+
         }
 
     }
     public void MakeMoney()
     {
         wallet += diamond;
-        
+        diamond = 0;
+        GameManager.isGameActive = false;
+        gameManager.RestartGame();
+
     }
     void TurnRed()
     {
@@ -136,16 +150,25 @@ public class PlayerController : MonoBehaviour
 
     void Movement()
     {
-        playerAnim.SetBool("Static_b", true);
-        playerAnim.SetFloat("Speed_f", 1f);
+        if (Input.touchCount > 0)
+        {
+            touch = Input.GetTouch(0);
 
-        //This is where we get player input
-        horizontalInput = Input.GetAxis("Horizontal");
+            if(touch.phase == TouchPhase.Moved)
+            {
+                playerAnim.SetBool("Static_b", true);
+                playerAnim.SetFloat("Speed_f", 1f);
 
-        //Move to player forward.     
-        transform.Translate(Vector3.forward * Time.deltaTime * speed);
-        //We turn the player.
-        transform.Rotate(Vector3.up, Time.deltaTime * rotationSpeed * horizontalInput);
+                transform.rotation = new Quaternion(transform.rotation.x + touch.deltaPosition.x * rotationSpeed, transform.rotation.y, transform.rotation.z, transform.rotation.w);
+                //This is where we get player input
+               // horizontalInput = Input.GetAxis("Horizontal");
+                //We turn the player.
+                //transform.Rotate(Vector3.up, Time.deltaTime * rotationSpeed * horizontalInput);
+            }
+            //Move to player forward.     
+            transform.Translate(Vector3.forward * Time.deltaTime * speed);
+        }
+       
 
     }
 
@@ -160,7 +183,7 @@ public class PlayerController : MonoBehaviour
             transform.position = new Vector3(rangeX, transform.position.y, transform.position.z);
         }
     }
-    void RotationBound()
+   /* void RotationBound()
     {
         if (transform.rotation.y < -maximumRotationAngle)
         {
@@ -172,7 +195,8 @@ public class PlayerController : MonoBehaviour
         }
 
 
-    }
+    }*/
+
     void PeopleCounter(Color other)
     {
         if (GetComponent<Renderer>().material.color.Equals(other))
@@ -199,13 +223,33 @@ public class PlayerController : MonoBehaviour
         transform.localScale -= Vector3.one * (playerPower * growthRate);
     }
 
-   
+    private void PlayerDeath()
+    {
+        playerAnim.SetBool("Death_b", true);
+        playerAnim.SetInteger("DeathType_int", 1);
+        gameManager.GameOver();
+        particleDeath.Play();
+        audioSource.PlayOneShot(boomSound);
+        audioSource.PlayOneShot(gameManager.booSound);
+        StartCoroutine(MakeInvisible());
+    }
+
+    public void MakeScore()
+    {
+        gameManager.score = enemyController.transform.position.z - basePoint;
+        if (gameManager.score > GameManager.highScore)
+        {
+            GameManager.highScore = gameManager.score;
+            gameManager.highScoreObj.SetActive(true);
+        }
+        gameManager.scoreObj.SetActive(true);
+    }
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Ally"))
         {
             PeopleCounter(other.GetComponent<Renderer>().material.color);
-
+            audioSource.PlayOneShot(collectSound);
             Destroy(other.gameObject);
         }
 
@@ -221,6 +265,7 @@ public class PlayerController : MonoBehaviour
         if (other.CompareTag("Diamond"))
         {
             diamond++;
+            audioSource.PlayOneShot(collectSound);
             Destroy(other.gameObject);
         }
 
@@ -234,14 +279,12 @@ public class PlayerController : MonoBehaviour
 
         if (other.CompareTag("Obstacle"))
         {
-            playerAnim.SetBool("Death_b", true);
-            playerAnim.SetInteger("DeathType_int", 1);
-            isGameOver = true;
-            particleDeath.Play();
-            Destroy(gameObject, 3f);
+            PlayerDeath();
         }
 
     }
+
+   
 
     private void OnTriggerExit(Collider other)
     {
@@ -250,10 +293,7 @@ public class PlayerController : MonoBehaviour
             playerHealth -= 40;
             if (playerHealth < 0)
             {
-                playerAnim.SetBool("Death_b", true);
-                playerAnim.SetInteger("DeathType_int", 1);
-                isGameOver = true;
-                Destroy(gameObject, 3f);
+                PlayerDeath();
             }
         }
     }
@@ -263,21 +303,21 @@ public class PlayerController : MonoBehaviour
         if (collision.gameObject.CompareTag("Wall1") && playerPower >= 20)
         {
             collision.gameObject.GetComponent<Collider>().isTrigger = true;
+            playerPower = 20;
             Destroy(collision.gameObject);
         }
-        if (collision.gameObject.CompareTag("Wall1") && playerPower >= 15 && playerPower < 20)
+       
+        if (collision.gameObject.CompareTag("Wall1") && playerPower < 20)
         {
-            collision.gameObject.GetComponent<Collider>().isTrigger = true;
-            playerPower = 15;
-            Destroy(collision.gameObject);
-        }
-        if (collision.gameObject.CompareTag("Wall1") && playerPower < 15)
-        {
-            playerAnim.SetBool("Death_b", true);
-            playerAnim.SetInteger("DeathType_int", 1);
-            isGameOver = true;
-            Destroy(gameObject, 3f);
-            particleDeath.Play();
+            PlayerDeath();
         }
     }
+
+    IEnumerator MakeInvisible()
+    {
+        yield return new WaitForSeconds(4.0f);
+        gameObject.SetActive(false);
+    }
+
+   
 }

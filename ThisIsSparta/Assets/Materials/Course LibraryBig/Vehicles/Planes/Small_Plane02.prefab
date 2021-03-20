@@ -87,6 +87,7 @@ GameObject:
   m_Component:
   - component: {fileID: 400002}
   - component: {fileID: 3300002}
+  - component: {fileID: 5591832540053748219}
   - component: {fileID: 2300002}
   m_Layer: 0
   m_Name: Small_Plane02
@@ -117,6 +118,20 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 100002}
+  m_Mesh: {fileID: 4300000, guid: 5bdf4d3d5d3951d4c8a861101a144e82, type: 3}
+--- !u!64 &5591832540053748219
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 100002}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Convex: 0
+  m_CookingOptions: 14
   m_Mesh: {fileID: 4300000, guid: 5bdf4d3d5d3951d4c8a861101a144e82, type: 3}
 --- !u!23 &2300002
 MeshRenderer:
