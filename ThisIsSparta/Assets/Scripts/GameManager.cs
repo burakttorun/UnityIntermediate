@@ -64,6 +64,8 @@ public class GameManager : MonoBehaviour
 
     RectTransform rt;
 
+    public int touchCounter = 0;
+
     private void Awake()
     {
        // ReadingAttribute();
@@ -77,7 +79,7 @@ public class GameManager : MonoBehaviour
         rt = middleGame.GetComponent<RectTransform>();
         ReadingAttribute();
 
-        Debug.Log(highScore);
+
     }
     private void Update()
     {
@@ -96,11 +98,7 @@ public class GameManager : MonoBehaviour
         powerUpPrice.text = PlayerController.powerUpPrice.ToString();
         thrustPrice.text = PlayerController.thrustPrice.ToString();
 
-        if (Input.GetMouseButtonDown(2))
-        {
-            StartGame();
-        }
-
+       
         if (enemyController.enemyHealth <= 0)
         {
             StartCoroutine(EndGameCanvas());

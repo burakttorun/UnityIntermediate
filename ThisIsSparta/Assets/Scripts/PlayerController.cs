@@ -6,7 +6,7 @@ using UnityEngine.SceneManagement;
 public class PlayerController : MonoBehaviour
 {
     private float speed = 10f;
-    private float rotationSpeed = 0.01f;
+    private float rotationSpeed = 0.1f;
     //private float horizontalInput;
     //private float maximumRotationAngle = 30.0f;
     private float rangeX = 4.0f;
@@ -26,7 +26,7 @@ public class PlayerController : MonoBehaviour
 
     public static int wallet = 0;
 
-    private float basePoint = 377f;
+    private float basePoint = 378f;
     [SerializeField]
     GameObject wallPref;
 
@@ -80,7 +80,7 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Space) && isReachBoss)
+        if (Input.GetKeyDown(KeyCode.Mouse0) && isReachBoss)
         {
             playerAnim.SetInteger("WeaponType_int", 10);
             if (enemyController.enemyHealth <= 50)
@@ -156,19 +156,19 @@ public class PlayerController : MonoBehaviour
 
             if(touch.phase == TouchPhase.Moved)
             {
-                playerAnim.SetBool("Static_b", true);
-                playerAnim.SetFloat("Speed_f", 1f);
-
-                transform.rotation = new Quaternion(transform.rotation.x + touch.deltaPosition.x * rotationSpeed, transform.rotation.y, transform.rotation.z, transform.rotation.w);
+                transform.Rotate(transform.rotation.x, transform.rotation.y + touch.deltaPosition.x * rotationSpeed, transform.rotation.z);
+                //transform.rotation = new Quaternion(transform.rotation.x , transform.rotation.y + touch.azimuthAngle * rotationSpeed, transform.rotation.z, transform.rotation.w);
                 //This is where we get player input
                // horizontalInput = Input.GetAxis("Horizontal");
                 //We turn the player.
                 //transform.Rotate(Vector3.up, Time.deltaTime * rotationSpeed * horizontalInput);
             }
-            //Move to player forward.     
-            transform.Translate(Vector3.forward * Time.deltaTime * speed);
+            
         }
-       
+        playerAnim.SetBool("Static_b", true);
+        playerAnim.SetFloat("Speed_f", 1f);
+        //Move to player forward.     
+        transform.Translate(Vector3.forward * Time.deltaTime * speed);
 
     }
 
