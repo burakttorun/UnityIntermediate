@@ -12,8 +12,8 @@ public class StickSizeController : MonoBehaviour
     }
 
     // Update is called once per frame
-    void FixedUpdate()
+    void Update()
     {
-        transform.localScale = new Vector3(firstSize, firstSize + (GameManager.collectedStick / 10), firstSize);
+        transform.localScale = new Vector3(firstSize, firstSize + ((float)GameManager.collectedStick / 10), firstSize);
     }
 }
