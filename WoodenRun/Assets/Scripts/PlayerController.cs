@@ -133,16 +133,16 @@ public class PlayerController : MonoBehaviour
 
         if (other.CompareTag("Obstacle"))
         {
-            playerAudio.PlayOneShot(hurtSound,2f);
+            playerAudio.PlayOneShot(hurtSound,1f);
 
-            if (GameManager.collectedStick < 0)
+            if (GameManager.collectedStick <= 0)
             {
                 PlayerDeath();
             }
         }
         if (other.CompareTag("Gold"))
         {
-            playerAudio.PlayOneShot(collectSound, 1f);
+            playerAudio.PlayOneShot(collectSound, 0.1f);
         }
         if (other.CompareTag("StickToCollect"))
         {
@@ -157,7 +157,7 @@ public class PlayerController : MonoBehaviour
         playerIsJumped = true;
         speed = 0;
         playerAnim.SetBool("Jump_b", true);
-        playerAudio.PlayOneShot(jumpSound, 0.25f);
+        playerAudio.PlayOneShot(jumpSound, 1f);
         StartCoroutine(Transition());
         yield return new WaitForSeconds(0.5f);
         playerAnim.SetBool("Jump_b", false);
