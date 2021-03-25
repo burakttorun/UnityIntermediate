@@ -43,6 +43,7 @@ public class GameManager : MonoBehaviour
     {
         audioSource = GetComponent<AudioSource>();
         playerController = GameObject.Find("Player").GetComponent<PlayerController>();
+        ReadingAttribute();
     }
 
     // Update is called once per frame
@@ -65,6 +66,7 @@ public class GameManager : MonoBehaviour
     {
         wallet += gold*collectedStick;
         gold = 0;
+        SaveAttribute();
         GameManager.isGameActive = false;
         RestartGame();
 
@@ -84,7 +86,7 @@ public class GameManager : MonoBehaviour
     public void RestartGame()
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
-
+        collectedStick = 0;
     }
 
     public void StartGame()
@@ -104,4 +106,16 @@ public class GameManager : MonoBehaviour
         diamondCounter.text = gold.ToString();
         walletCounter.text = wallet.ToString();       
     }
+
+    void SaveAttribute()
+    {
+        PlayerPrefs.SetInt("wallet", wallet);
+        PlayerPrefs.Save();
+    }
+
+    void ReadingAttribute()
+    {
+        wallet = PlayerPrefs.GetInt("wallet");      
+    }
+
 }

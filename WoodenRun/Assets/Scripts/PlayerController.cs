@@ -7,9 +7,9 @@ public class PlayerController : MonoBehaviour
 {
     private float speed = 5f;
     private float rangeX = 2.5f;
-    private float rotationSpeed = 100f;
- 
-    private float horizontalInput;
+    private float rotationSpeed = 0.1f;
+
+    //private float horizontalInput;
     private float translateAxisY = 0.5f;
     private float basePointAxisY = 1.5f;
 
@@ -19,7 +19,7 @@ public class PlayerController : MonoBehaviour
 
     Animator playerAnim;
     GameManager gameManager;
-   
+
     private AudioSource playerAudio;
     public AudioClip jumpSound;
     public AudioClip hurtSound;
@@ -30,17 +30,22 @@ public class PlayerController : MonoBehaviour
 
     private bool boomSoundIsPlaying = false;
 
-   public ParticleSystem particleDeath;
+    public ParticleSystem particleDeath;
     [SerializeField]
     ParticleSystem[] particleFireworks;
+    private Touch touch;
+
+    protected Joystick joystick;
     // Start is called before the first frame update
     void Start()
     {
         playerAnim = GetComponent<Animator>();
         gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
-        
+
         playerAnim = GetComponent<Animator>();
         playerAudio = GetComponent<AudioSource>();
+
+        joystick = FindObjectOfType<Joystick>();
     }
 
     // Update is called once per frame
@@ -53,23 +58,23 @@ public class PlayerController : MonoBehaviour
             {
                 Movement();
             }
-           
+
             TransformBound();
         }
-         
+
     }
 
     private void PlayerDeath()
     {
         playerAnim.SetBool("Death_b", true);
-        playerAnim.SetInteger("DeathType_int", 1);   
+        playerAnim.SetInteger("DeathType_int", 1);
         particleDeath.Play();
         if (!boomSoundIsPlaying)
         {
             boomSoundIsPlaying = true;
             playerAudio.PlayOneShot(boomSound);
         }
-             
+
         StartCoroutine(MakeInvisible());
         gameManager.GameOver();
     }
@@ -82,20 +87,9 @@ public class PlayerController : MonoBehaviour
 
     void Movement()
     {
-        // if (Input.touchCount > 0)
-        {
-            // touch = Input.GetTouch(0);
 
-            // if (touch.phase == TouchPhase.Moved)
-            {
-                //  transform.Translate(transform.rotation.x, transform.rotation.y + touch.deltaPosition.x * rotationSpeed, transform.rotation.z);
-                //This is where we get player input
-                horizontalInput = Input.GetAxis("Horizontal");
-                //We turn the player.
-                transform.Rotate(Vector3.up, Time.deltaTime * rotationSpeed * horizontalInput);
-            }
+        transform.Translate(transform.rotation.x + joystick.Horizontal * rotationSpeed, transform.rotation.y, transform.rotation.z);
 
-        }
         playerAnim.SetBool("Static_b", true);
         playerAnim.SetFloat("Speed_f", 1f);
         //Move to player forward.     
@@ -115,7 +109,7 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    
+
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("StickToCollect"))
@@ -130,11 +124,11 @@ public class PlayerController : MonoBehaviour
             {
                 item.Play(); //Fireworks effect starts when teammate catches the ball.
             }
-        } 
+        }
 
         if (other.CompareTag("Obstacle"))
         {
-            playerAudio.PlayOneShot(hurtSound,1f);
+            playerAudio.PlayOneShot(hurtSound, 1f);
 
             if (GameManager.collectedStick <= 0)
             {
@@ -147,7 +141,7 @@ public class PlayerController : MonoBehaviour
         }
         if (other.CompareTag("StickToCollect"))
         {
-            playerAudio.PlayOneShot(growthSound,0.5f);
+            playerAudio.PlayOneShot(growthSound, 0.5f);
         }
 
 
@@ -175,7 +169,7 @@ public class PlayerController : MonoBehaviour
     {
         float t = 0.0f;
         Vector3 startingPos = transform.position;
-        Vector3 target = new Vector3(transform.position.x, transform.position.y, transform.position.z + (GameManager.collectedStick*5));
+        Vector3 target = new Vector3(transform.position.x, transform.position.y, transform.position.z + (GameManager.collectedStick * 5));
         while (t < 1.0f)
         {
             t += Time.deltaTime * (Time.timeScale / transitionDuration);
