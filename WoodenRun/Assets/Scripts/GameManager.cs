@@ -1,13 +1,16 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
     PlayerController playerController;
     public static int collectedStick = 0;
-    public static bool isGameActive = true;
+    public static bool isGameActive = false;
     public int gold = 0;
 
     [SerializeField]
@@ -18,7 +21,23 @@ public class GameManager : MonoBehaviour
     private bool booSoundIsPlaying = false;
     private bool clapSoundIsPlaying = false;
 
+
+    [SerializeField]
+    TextMeshProUGUI diamondCounter;
+    [SerializeField]
+    TextMeshProUGUI walletCounter;
+    [SerializeField]
+    TextMeshProUGUI scoreValue;
    
+
+    [SerializeField]
+    GameObject gameOver;
+    [SerializeField]
+    GameObject preGame;
+    [SerializeField]
+    GameObject lastGame;
+    private static int wallet;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -38,10 +57,18 @@ public class GameManager : MonoBehaviour
         {
             clapSoundIsPlaying = true;
             audioSource.PlayOneShot(clapSound);
+            StartCoroutine(EndGameCanvas());
         }
+        ExportToUI();
+    }
+    public void MakeMoney()
+    {
+        wallet += gold*collectedStick;
+        gold = 0;
+        GameManager.isGameActive = false;
+        RestartGame();
 
     }
-
     public void GameOver()
     {
         isGameActive = false;
@@ -50,9 +77,31 @@ public class GameManager : MonoBehaviour
             booSoundIsPlaying = true;
             audioSource.PlayOneShot(booSound);
         }
-       
+        gameOver.SetActive(true);
         collectedStick = 0;
     }
 
-   
+    public void RestartGame()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+
+    }
+
+    public void StartGame()
+    {
+        isGameActive = true;
+        preGame.SetActive(false);
+    }
+
+    IEnumerator EndGameCanvas()
+    {
+        yield return new WaitForSeconds(4.5f);
+        lastGame.SetActive(true);
+    }
+
+    void ExportToUI()
+    {
+        diamondCounter.text = gold.ToString();
+        walletCounter.text = wallet.ToString();       
+    }
 }
