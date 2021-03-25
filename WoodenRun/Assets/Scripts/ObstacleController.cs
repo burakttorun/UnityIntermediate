@@ -14,7 +14,7 @@ public class ObstacleController :ItemController
 
     public override void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Player"))
+        if (other.CompareTag("Player") && GameManager.isGameActive)
         {
             GameManager.collectedStick--;
 

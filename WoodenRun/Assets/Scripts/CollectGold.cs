@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class CollectGold : ItemController
 {
-    private float rotateSpeed = 1;
+    private float rotateSpeed = 50;
     public override void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Player"))

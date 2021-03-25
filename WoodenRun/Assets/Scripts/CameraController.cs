@@ -6,6 +6,7 @@ public class CameraController : MonoBehaviour
 {
     public GameObject player;
     private int cameraStartingPoint = 4;
+    public float transitionDuration = 2f;
     [SerializeField] private Vector3 offset;
 
     private void FixedUpdate()
@@ -13,9 +14,22 @@ public class CameraController : MonoBehaviour
         offset = new Vector3(0, cameraStartingPoint + (GameManager.collectedStick / 2), -cameraStartingPoint - GameManager.collectedStick);
     }
     private void LateUpdate()
+    { 
+        StartCoroutine(Transition());
+    }
+
+    IEnumerator Transition()
     {
-        //Offset the camera behind the player by adding to the player's position.
-        //transform.position = player.transform.position + offset;
-        transform.position = Vector3.Lerp(transform.position, player.transform.position + offset, 1);
+        float t = 0.0f;
+        Vector3 startingPos = transform.position;
+        while (t < 1.0f)
+        {
+            t += Time.deltaTime * (Time.timeScale / transitionDuration);
+
+            //Offset the camera behind the player by adding to the player's position.
+            transform.position = Vector3.Lerp(startingPos, player.transform.position + offset, t);
+            yield return 0;
+        }
+
     }
 }

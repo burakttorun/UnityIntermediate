@@ -9,6 +9,7 @@ TagManager:
   - StickL
   - StickR
   - StickToCollect
+  - FinishLine
   layers:
   - Default
   - TransparentFX
