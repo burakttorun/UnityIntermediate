@@ -1,6 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
@@ -20,36 +22,52 @@ public class GameManager : MonoBehaviour
     public GameObject preGame;
     public GameObject middleGame;
 
-    private int topPlanetToPredict;
-    private int bottomPlanetToPredict;
+    private static int topPlanetToPredict;
+    private static int bottomPlanetToPredict;
 
     private bool randomStart = false;
 
     public GameObject[] scoreSprites;
     public Sprite[] checkCorrect;
-    private int trialNumber=0;
+    public Sprite[] controlColors;
+    private int controlNumber;
+    private static int trialNumber = 0;
 
+   
+    private int trialLimit=6;
+    private bool isPressedButton=false;
+
+    
+    [SerializeField]
+    TextMeshProUGUI walletCounter;
     private int gold;
-    private void Awake()
+    
+
+    // Start is called before the first frame update
+    void Start()
     {
         RandomPlanets();
         topPlanetToPredict = topCount;
         bottomPlanetToPredict = bottomCount;
-    }
-    // Start is called before the first frame update
-    void Start()
-    {
-       
+        ReadingMoney();
+        walletCounter.text = gold.ToString();
+
+        for ( int i = 0; i < trialLimit; i++)
+        {
+            controlNumber = ReadingAttribute(i);
+            scoreSprites[i].GetComponent<SpriteRenderer>().sprite = controlColors[controlNumber];
+        }
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (isGameActive.Equals(true)&& !randomStart)
+        if (isGameActive.Equals(true) && !randomStart)
         {
             RandomPlanets();
             randomStart = true;
         }
+       
     }
 
     public void TopLeftButtonClicked()
@@ -101,10 +119,10 @@ public class GameManager : MonoBehaviour
 
     void RandomPlanets()
     {
-        int topCount = Random.Range(0, sprites.Length);
+        topCount = Random.Range(0, sprites.Length);
         topPlanetImage.sprite = sprites[topCount];
 
-        int bottomCount = Random.Range(0, sprites.Length);
+        bottomCount = Random.Range(0, sprites.Length);
         bottomPlanetImage.sprite = sprites[bottomCount];
     }
 
@@ -121,35 +139,88 @@ public class GameManager : MonoBehaviour
     void GameOver()
     {
         isGameActive = false;
+        trialNumber = 0;
+        for (int i = 0; i < trialLimit; i++)
+        {
+            SaveAttribute(i, 0);
+        }
 
     }
 
     public void CheckPlanets()
     {
-        if (topPlanetToPredict.Equals(topCount))
+        if (trialNumber < trialLimit && !isPressedButton)
         {
-            topPlanetImage.sprite = checkCorrect[0];
-        }
-        if (topPlanetToPredict!=topCount)
-        {
-            topPlanetImage.sprite = checkCorrect[1];
-        }
-        if (bottomPlanetToPredict.Equals(bottomCount))
-        {
-            bottomPlanetImage.sprite = checkCorrect[0];
-        }
-        if (bottomPlanetToPredict != bottomCount)
-        {
-            bottomPlanetImage.sprite = checkCorrect[1];
-        }
-        if(topPlanetToPredict.Equals(topCount) && bottomPlanetToPredict.Equals(bottomCount))
-        {
-            scoreSprites[trialNumber].GetComponent<SpriteRenderer>().color = Color.green;
-            gold += 15;
-        }
-        else
-            scoreSprites[trialNumber].GetComponent<SpriteRenderer>().color = Color.red;
+            if (topPlanetToPredict.Equals(topCount))
+            {
+                topPlanetImage.sprite = checkCorrect[0];
+            }
+            if (topPlanetToPredict != topCount)
+            {
+                topPlanetImage.sprite = checkCorrect[1];
+            }
+            if (bottomPlanetToPredict.Equals(bottomCount))
+            {
+                bottomPlanetImage.sprite = checkCorrect[0];
+            }
+            if (bottomPlanetToPredict != bottomCount)
+            {
+                bottomPlanetImage.sprite = checkCorrect[1];
+            }
+            if (topPlanetToPredict.Equals(topCount) && bottomPlanetToPredict.Equals(bottomCount))
+            {
+                controlNumber = 1;
+                scoreSprites[trialNumber].GetComponent<SpriteRenderer>().sprite = controlColors[controlNumber];
+                gold += 15;
+                walletCounter.text = gold.ToString();
+                SaveMoney();
+                SaveAttribute(trialNumber, 1);
+            }
+            else
+            {
+                controlNumber = 2;
+                scoreSprites[trialNumber].GetComponent<SpriteRenderer>().sprite = controlColors[controlNumber];
+                SaveAttribute(trialNumber, 2);
+            }
+               
 
-        trialNumber++;
+            trialNumber++;
+            isPressedButton = true;
+            StartCoroutine(RestartGame());
+
+            if (trialNumber.Equals(trialLimit))
+            {
+                GameOver();
+                
+            }
+        }
+    }
+
+    private IEnumerator RestartGame()
+    {
+        yield return new WaitForSeconds(2f);
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+
+    }
+    void SaveMoney()
+    {
+        PlayerPrefs.SetInt("wallet", gold);
+        PlayerPrefs.Save();
+    }
+    void ReadingMoney()
+    {
+        gold = PlayerPrefs.GetInt("wallet");
+    }
+
+    int ReadingAttribute(int trialNumber)
+    {
+        controlNumber = PlayerPrefs.GetInt("score" + trialNumber);
+        return controlNumber;
+    }
+
+    void SaveAttribute(int trialNumber,int value)
+    {
+        PlayerPrefs.SetInt("score"+ trialNumber, value);
+        PlayerPrefs.Save();
     }
 }
