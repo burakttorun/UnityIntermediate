@@ -41,11 +41,21 @@ public class GameManager : MonoBehaviour
     [SerializeField]
     TextMeshProUGUI walletCounter;
     private int gold;
-    
 
+    [SerializeField]
+    AudioClip correctSound;
+    [SerializeField]
+    AudioClip wrongSound;
+    AudioSource audioSource;
+
+    [SerializeField]
+    GameObject musicManager;
     // Start is called before the first frame update
     void Start()
     {
+
+        DontDestroyOnLoad(musicManager);
+        audioSource = GetComponent<AudioSource>();
         RandomPlanets();
         topPlanetToPredict = topCount;
         bottomPlanetToPredict = bottomCount;
@@ -67,7 +77,8 @@ public class GameManager : MonoBehaviour
             RandomPlanets();
             randomStart = true;
         }
-       
+
+        
     }
 
     public void TopLeftButtonClicked()
@@ -169,6 +180,7 @@ public class GameManager : MonoBehaviour
             }
             if (topPlanetToPredict.Equals(topCount) && bottomPlanetToPredict.Equals(bottomCount))
             {
+                audioSource.PlayOneShot(correctSound);
                 controlNumber = 1;
                 scoreSprites[trialNumber].GetComponent<SpriteRenderer>().sprite = controlColors[controlNumber];
                 gold += 15;
@@ -178,6 +190,7 @@ public class GameManager : MonoBehaviour
             }
             else
             {
+                audioSource.PlayOneShot(wrongSound);
                 controlNumber = 2;
                 scoreSprites[trialNumber].GetComponent<SpriteRenderer>().sprite = controlColors[controlNumber];
                 SaveAttribute(trialNumber, 2);
@@ -223,4 +236,10 @@ public class GameManager : MonoBehaviour
         PlayerPrefs.SetInt("score"+ trialNumber, value);
         PlayerPrefs.Save();
     }
+
+    private void OnApplicationPause()
+    {
+        GameOver();
+    }
+
 }
